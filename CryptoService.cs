@@ -6,7 +6,7 @@ using PgpCore;
 
 namespace PayoutEncryption;
 
-public partial class CryptoService
+public class CryptoService
 {
     [Flags]
     public enum KeyType
