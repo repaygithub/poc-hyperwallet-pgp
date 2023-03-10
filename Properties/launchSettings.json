@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "poc-hyperwallet-pgp": {
+      "commandName": "Project",
+      "commandLineArgs": "-in testfile.txt -key public"
+    }
+  }
+}
