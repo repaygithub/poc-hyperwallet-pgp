@@ -11,12 +11,16 @@
 // 3. The -in parameter can contain the relative or full path to a file to be encrypted or decrypted.
 //       - defaults to `testfile.txt`
 //
-// 4. If you want to create and use your own key pair, start by generating the sample key pairs that Repay and Paypal will use through the exchange.
+// 4. If you want to create and use your own key pair, start by generating the sample key pairs to be used through the exchange.
+//
+//    You need to install gnupg on your machine, if you don't have it already. Then run the following command to generate a key pair.
 //
 //    $ gpg --gen-key
 //
-//    I've used "PayPal paypal@paypal.com" as the user and email address to simulate encrypting a payout file with hyperwallet public key and Paypal decrypting it with their private key.
-//    When asked for a password leave it blank. There is no information on hyperwallet documentation that the decryption will require password sharing between Repay and Paypal. Note: You'll have to hit the button on the left of the confirmation window a few times.
+//    I've used "PayPal paypal@paypal.com" as the user and email address to simulate encrypting a payout file with hyperwallet public key and Paypal decrypting it
+//    with their private key.
+//    When asked for a password leave it blank. There is no information on hyperwallet documentation that the decryption will require password sharing between Repay
+//    and Paypal. Note: You'll have to hit the button on the left of the confirmation window a few times.
 //
 //    You can check that the keys exist with:
 //
@@ -27,7 +31,7 @@
 //    $ gpg --output privat.pgp --armor --export-secret-key Paypal
 //    $ gpg --output public.pgp--armor--export Paypal
 //
-//    You should now have 2 ascii files in the current folder which you can open and copy into the code below
+//    You should now have 2 ascii files in the current folder which you can open and copy into the code below. Note you can also use verbatim strings with @.
 
 using System;
 
