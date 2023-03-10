@@ -1,44 +1,69 @@
 ﻿using System;
+using System.IO;
+
+using PgpCore;
 
 namespace PayoutEncryption;
 
-public class CryptoService
+public partial class CryptoService
 {
-    private readonly string? _encryptionKey;
-    private readonly string? _decryptionKey;
-
-    public CryptoService(string encryptionKey, string decryptionKey)
+    [Flags]
+    public enum Operation
     {
-        _encryptionKey = encryptionKey;
-        _decryptionKey = decryptionKey;
+        Encrypt = 1,
+        Decrypt = 2
     }
 
-    public CryptoService(string key, OperationType operationType)
+    private readonly PGP _crypto;
+    private readonly Operation _operation;
+
+    public CryptoService(string publicKey, string privateKey)
     {
-        switch (operationType)
+        if (string.IsNullOrWhiteSpace(publicKey) || string.IsNullOrWhiteSpace(privateKey))
         {
-            case OperationType.Decrypt:
-                _decryptionKey = key;
+            throw new ArgumentException("PGP keys must be a valid public/private key pair");
+        }
+
+        _crypto = new PGP(new EncryptionKeys(publicKey, privateKey, ""));
+        _operation = Operation.Encrypt | Operation.Decrypt;
+    }
+
+    public CryptoService(string key, Operation operation)
+    {
+        EncryptionKeys keys;
+
+        switch (operation)
+        {
+            case Operation.Decrypt:
+                keys = new EncryptionKeys(key, "");
+                _operation = Operation.Decrypt;
                 break;
             default:
-                _encryptionKey = key;
+                keys = new EncryptionKeys(key);
+                _operation = Operation.Encrypt;
                 break;
         }
+
+        _crypto = new PGP(keys);
     }
 
     public void PgpEncrypt(string fileInput)
     {
-        if (string.IsNullOrWhiteSpace(_encryptionKey))
+        if (!_operation.HasFlag(Operation.Encrypt))
         {
             throw new InvalidOperationException("A valid public key is required for encryption.");
         }
+
+        _crypto.EncryptFile(new FileInfo(fileInput), new FileInfo($"{fileInput}.pgp"));
     }
 
     public void PgpDecrypt(string fileInput)
     {
-        if (string.IsNullOrWhiteSpace(_decryptionKey))
+        if (!_operation.HasFlag(Operation.Decrypt))
         {
             throw new InvalidOperationException("A valid private key is required for decryption.");
         }
+
+        _crypto.DecryptFile(new FileInfo(fileInput), new FileInfo($"dec.{fileInput}"));
     }
 }
